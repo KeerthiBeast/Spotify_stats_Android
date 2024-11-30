@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.spotifystats.ui.screen.auth.AuthScreen
+import com.example.spotifystats.ui.screen.auth.CheckToken
 
 @Composable
 fun FavouriteScreen(
@@ -19,6 +20,7 @@ fun FavouriteScreen(
     context: Context,
     paddingValues: PaddingValues
 ) {
+    CheckToken(context = context)
     val topTracks by viewModel.topTrack.collectAsState()
 
     LazyColumn(

@@ -103,7 +103,7 @@ fun AuthScreen(
 
 @Composable
 fun CheckToken(
-    viewModel: AuthViewModel,
+    viewModel: AuthViewModel = hiltViewModel(),
     context: Context,
 ) {
     val refreshStatus by viewModel.refreshStatus.collectAsState()
