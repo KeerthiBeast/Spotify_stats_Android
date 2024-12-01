@@ -106,13 +106,9 @@ fun CheckToken(
     viewModel: AuthViewModel = hiltViewModel(),
     context: Context,
 ) {
-    val refreshStatus by viewModel.refreshStatus.collectAsState()
     val sharedPref = context.getSharedPreferences("app_pref", Context.MODE_PRIVATE)
     if(sharedPref.getLong("expiresAt", 0) < System.currentTimeMillis()) {
         viewModel.refreshToken()
-    }
-    if(refreshStatus == -1) {
-        customTabRequest(context)
     }
 }
 

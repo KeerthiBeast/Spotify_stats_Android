@@ -67,7 +67,7 @@ class SpotifyAuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun refreshToken(): Int {
+    override suspend fun refreshToken() {
         try {
             val sharedPref = context.getSharedPreferences(
                 "app_pref",
@@ -79,14 +79,12 @@ class SpotifyAuthRepositoryImpl @Inject constructor(
             if(response.isSuccessful) {
                 val responseBody = response.body()
                 val token = responseBody?.access_token
-                val refreshToken = responseBody?.refresh_token
 
                 val expiresIn = responseBody?.expires_in
                 val expiresAt = System.currentTimeMillis() + expiresIn!! * 1000
 
                 with(sharedPref.edit()) {
                     putString("token", token)
-                    putString("refresh", refreshToken)
                     putLong("expiresIn", expiresAt)
                 }.apply()
 
@@ -97,8 +95,6 @@ class SpotifyAuthRepositoryImpl @Inject constructor(
                         Toast.LENGTH_LONG
                     ).show()
                 }
-
-                return 0
             } else {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(
@@ -107,7 +103,6 @@ class SpotifyAuthRepositoryImpl @Inject constructor(
                         Toast.LENGTH_LONG
                     ).show()
                 }
-                return -1
             }
         } catch(e: Exception) {
             withContext(Dispatchers.Main) {
@@ -117,7 +112,6 @@ class SpotifyAuthRepositoryImpl @Inject constructor(
                     Toast.LENGTH_LONG
                 ).show()
             }
-            return -1
         }
     }
 }

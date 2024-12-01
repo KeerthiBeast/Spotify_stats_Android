@@ -16,8 +16,6 @@ class AuthViewModel @Inject constructor(
     private val api: SpotifyAuthRepository,
     @ApplicationContext private val context: Context
 ): ViewModel() {
-    private val _refreshStatus = MutableStateFlow<Int>(-1)
-    val refreshStatus = _refreshStatus.asStateFlow()
 
     fun getToken(code: String) {
         viewModelScope.launch {
@@ -27,7 +25,7 @@ class AuthViewModel @Inject constructor(
 
     fun refreshToken() {
         viewModelScope.launch {
-            _refreshStatus.value = api.refreshToken()
+            api.refreshToken()
         }
     }
 }
