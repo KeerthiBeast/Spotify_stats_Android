@@ -20,6 +20,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.spotifystats.ui.screen.auth.AuthenticationChecker
 
@@ -48,7 +50,7 @@ fun RecentScreen(
                 .padding(innerPadding)
                 .padding(bottom = paddingValues.calculateBottomPadding())
         ) {
-            if (canShow == false) {
+            if (!canShow) {
                 AuthenticationChecker(context) {
                     canShow = true
                 }
@@ -56,11 +58,17 @@ fun RecentScreen(
                 val recentTracks by viewModel.recentTracks.collectAsState()
 
                 LazyColumn(
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier
                         .fillMaxSize()
                 ) {
-                    items(recentTracks) { it ->
-                        Text(text = "Track: ${it.songName}")
+                    items(recentTracks) { track->
+                        Text(
+                            text = track.songName,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
                     }
                 }
             }

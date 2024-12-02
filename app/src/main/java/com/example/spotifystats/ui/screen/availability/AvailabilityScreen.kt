@@ -6,26 +6,28 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,13 +35,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
+import com.example.spotifystats.Values
 import com.example.spotifystats.domain.model.Availability
 import com.example.spotifystats.ui.screen.auth.AuthenticationChecker
+import com.example.spotifystats.ui.theme.CircularBlack
 
 @SuppressLint("ResourceType")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,12 +55,24 @@ fun AvailabilityScreen(
     paddingValues: PaddingValues
 ) {
     var canShow by remember { mutableStateOf(false)}
+    var showSearchBar by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text("Availability")
+                },
+                actions = {
+                    IconToggleButton(
+                        checked = showSearchBar,
+                        onCheckedChange = { showSearchBar = it },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Search Toggle"
+                        )
+                    }
                 }
             )
         }
@@ -68,21 +85,19 @@ fun AvailabilityScreen(
                 .padding(innerPadding)
                 .padding(bottom = paddingValues.calculateBottomPadding())
         ) {
-            if (canShow == false) {
+            if (!canShow) {
                 AuthenticationChecker(context) {
                     canShow = true
                 }
             } else {
+                LaunchedEffect(true) {
+                    viewModel.getAvailability(getId(Values.testUrl))
+                }
                 val availability by viewModel.availability.collectAsState()
                 var songId by remember { mutableStateOf("") }
                 var isEnabled by remember { mutableStateOf(false) }
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
+                if (showSearchBar) {
                     OutlinedTextField(
                         value = songId,
                         onValueChange = {
@@ -94,36 +109,47 @@ fun AvailabilityScreen(
                         shape = MaterialTheme.shapes.large,
                         leadingIcon = {
                             Icon(
-                                imageVector = Icons.Default.Search,
+                                imageVector = Icons.Default.Info,
                                 contentDescription = "Song ID"
                             )
                         },
+                        trailingIcon = {
+                            IconButton(
+                                onClick = {
+                                    val id = getId(songId)
+                                    viewModel.getAvailability(id)
+                                    songId = ""
+                                    isEnabled = false
+                                },
+                                enabled = isEnabled
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Search,
+                                    contentDescription = "Search"
+                                )
+                            }
+                        },
                         modifier = Modifier
-                            .weight(1f)
                             .padding(16.dp)
                     )
-
-                    Button(
-                        onClick = {
-                            val id = getId(songId)
-                            viewModel.getAvailability(id)
-                            songId = ""
-                            isEnabled = false
-                        },
-                        enabled = isEnabled,
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        Text("Search")
-                    }
                 }
                 if(availability.image.isNotBlank()) {
                     AsyncImage(
                         model = availability.image,
                         contentDescription = "Song cover",
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .clip(shape = CircleShape)
                     )
                 }
-                Spacer(modifier = Modifier.size(16.dp))
-                Text(availability.name ?: "Search Songs")
+                Spacer(modifier = Modifier.size(7.dp))
+                Text(
+                    text = availability.name,
+                    fontFamily = CircularBlack,
+                    color = Color.Green,
+                    modifier = Modifier
+                        .padding(6.dp)
+                )
 
                 if (availability.countries.isNotEmpty()) {
                     LazyVerticalGrid(

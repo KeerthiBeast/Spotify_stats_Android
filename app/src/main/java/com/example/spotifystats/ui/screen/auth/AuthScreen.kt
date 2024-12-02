@@ -5,12 +5,15 @@ import android.net.Uri
 import android.util.Log
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.spotifystats.Values
+import com.example.spotifystats.ui.theme.CircularBlack
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -48,9 +51,18 @@ fun LogoutBtn(
                 apply()
             }
             onClick()
-        }
+        },
+        colors = ButtonColors(
+            containerColor = Color.Red,
+            disabledContentColor = Color.White,
+            contentColor = Color.White,
+            disabledContainerColor = Color.Red
+        )
     ) {
-        Text("Logout")
+        Text(
+            text = "LogOut",
+            fontFamily = CircularBlack
+        )
     }
 }
 

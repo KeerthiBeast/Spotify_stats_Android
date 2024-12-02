@@ -10,7 +10,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavHostController
@@ -34,16 +34,16 @@ object NavName {
 fun Navigation(activity: ComponentActivity, navController: NavHostController, startDest: String, paddingValues: PaddingValues) {
     NavHost(navController = navController, startDestination = startDest) {
         composable(NavName.sync) {
-            UserScreen(context = activity, paddingValues = paddingValues)
+            RecentScreen(context = activity, paddingValues = paddingValues)
         }
         composable(NavName.home) {
             FavouriteScreen(context = activity, paddingValues =  paddingValues)
         }
         composable(NavName.about) {
-            RecentScreen(context = activity, paddingValues = paddingValues)
+            AvailabilityScreen(context = activity, paddingValues = paddingValues)
         }
         composable(NavName.profile) {
-            AvailabilityScreen(context = activity, paddingValues = paddingValues)
+            UserScreen(context = activity, paddingValues = paddingValues)
         }
     }
 }
@@ -68,8 +68,8 @@ sealed class Screens(val route: String,
     )
     data object About: Screens(
         route = NavName.about,
-        selected = Icons.Default.Settings,
-        unselected = Icons.Default.Settings,
+        selected = Icons.Default.Search,
+        unselected = Icons.Default.Search,
         label = NavName.about
     )
     data object Profile: Screens(

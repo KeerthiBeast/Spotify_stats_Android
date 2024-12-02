@@ -1,5 +1,6 @@
 package com.example.spotifystats.data.network.dto
 
+import com.example.flagtesting.getFlags
 import com.example.spotifystats.domain.model.User
 
 data class UserDto(
@@ -17,9 +18,9 @@ data class UserDto(
     val uri: String
 ) {
     fun toModel(): User = User(
-        id = id,
+        country = getFlags(country.lowercase()),
         name = display_name,
-        profile = images[1].url,
+        profile = images.first().url,
         product = product
     )
     data class ExplicitContent(
