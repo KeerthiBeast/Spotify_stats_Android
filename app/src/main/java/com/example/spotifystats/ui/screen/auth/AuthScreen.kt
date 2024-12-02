@@ -2,113 +2,75 @@ package com.example.spotifystats.ui.screen.auth
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.browser.customtabs.CustomTabsIntent
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
 import com.example.spotifystats.Values
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
-fun AuthScreen(
-    viewModel: AuthViewModel = hiltViewModel(),
+fun LoginBtn(
     context: Context,
-    paddingValues: PaddingValues
+    onClick: () -> Unit
 ) {
-    val sharedPreferences = context.getSharedPreferences("app_pref", Context.MODE_PRIVATE)
-
-    var code by remember {
-        mutableStateOf(
-            context.getSharedPreferences("app_pref", Context.MODE_PRIVATE)
-                .getString("code", null)
-        )
-    }
-    var refreshToken by remember {
-        mutableStateOf(
-            context.getSharedPreferences("app_pref", Context.MODE_PRIVATE)
-                .getString("refresh", null)
-        )
-    }
-    var token by remember {
-        mutableStateOf(
-            context.getSharedPreferences("app_pref", Context.MODE_PRIVATE)
-                .getString("token", null)
-        )
-    }
-
-    Column(
-        modifier = Modifier.padding(paddingValues)
+    val scope = rememberCoroutineScope()
+    Button(
+        onClick = {
+            customTabRequest(context = context)
+            scope.launch {
+                delay(3000)
+                onClick()
+            }
+        }
     ) {
-        Text(
-            text = code ?: "No code"
-        )
-
-        Text(
-            text = token ?: "No token",
-            color = Color.Green
-        )
-
-        Text(
-            text = refreshToken ?: "No Refresh Token",
-            color = Color.Blue
-        )
-
-        Button(
-            onClick = {
-                customTabRequest(context = context)
-                code = sharedPreferences.getString("code", "")
-                token = sharedPreferences.getString("token", "")
-                refreshToken = sharedPreferences.getString("refresh", "")
-            }
-        ) {
-            Text("Login")
-        }
-
-        Button(
-            onClick = {
-                viewModel.refreshToken()
-            }
-        ) {
-            Text("Refresh Test")
-        }
-
-        Button(
-            onClick = {
-                with(sharedPreferences.edit()) {
-                    putString("code", "")
-                    putString("token", "")
-                    putString("refresh", "")
-                    apply()
-                }
-                code = sharedPreferences.getString("code", "")
-                token = sharedPreferences.getString("token", "")
-                refreshToken = sharedPreferences.getString("refresh", "")
-            }
-        ) {
-            Text("Clear")
-        }
+        Text("Login")
     }
 }
 
 @Composable
-fun CheckToken(
-    viewModel: AuthViewModel = hiltViewModel(),
+fun LogoutBtn(
     context: Context,
+    onClick: () -> Unit
+) {
+    val sharedPreferences = context.getSharedPreferences("app_pref", Context.MODE_PRIVATE)
+    Button(
+        onClick = {
+            with(sharedPreferences.edit()) {
+                putString("code", null)
+                putString("token", null)
+                putString("refresh", null)
+                apply()
+            }
+            onClick()
+        }
+    ) {
+        Text("Logout")
+    }
+}
+
+@Composable
+fun RefreshToken(
+    context: Context,
+    onClick: () -> Unit,
+    viewModel: AuthViewModel = hiltViewModel()
 ) {
     val sharedPref = context.getSharedPreferences("app_pref", Context.MODE_PRIVATE)
+    val scope = rememberCoroutineScope()
     if(sharedPref.getLong("expiresAt", 0) < System.currentTimeMillis()) {
+        Log.d("Expires At", sharedPref.getLong("expiresAt", 0).toString())
         viewModel.refreshToken()
+    }
+    LaunchedEffect(true) {
+        scope.launch{
+            delay(3000)
+            onClick()
+        }
     }
 }
 
@@ -128,4 +90,17 @@ fun customTabRequest(context: Context) {
         context,
         Uri.parse(urlConstructor.toString())
     )
+}
+
+@Composable
+fun AuthenticationChecker(
+    context: Context,
+    onClick: () -> Unit
+) {
+    val sharedPref = context.getSharedPreferences("app_pref", Context.MODE_PRIVATE)
+    if(sharedPref.getString("token", null) == null) {
+        LoginBtn(context = context, onClick = onClick)
+    } else {
+        RefreshToken(context = context, onClick = onClick)
+    }
 }

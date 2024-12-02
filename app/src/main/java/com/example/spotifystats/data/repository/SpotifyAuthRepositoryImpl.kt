@@ -37,13 +37,13 @@ class SpotifyAuthRepositoryImpl @Inject constructor(
                 with(sharedPref.edit()) {
                     putString("token", token)
                     putString("refresh", refreshToken)
-                    putLong("expiresIn", expiresAt)
+                    putLong("expiresAt", expiresAt)
                 }.apply()
 
                 withContext(Dispatchers.Main) {
                     Toast.makeText(
                         context,
-                        "Success",
+                        "Authenticated",
                         Toast.LENGTH_LONG
                     ).show()
                 }
@@ -85,13 +85,13 @@ class SpotifyAuthRepositoryImpl @Inject constructor(
 
                 with(sharedPref.edit()) {
                     putString("token", token)
-                    putLong("expiresIn", expiresAt)
+                    putLong("expiresAt", expiresAt)
                 }.apply()
 
                 withContext(Dispatchers.Main) {
                     Toast.makeText(
                         context,
-                        "Success",
+                        "Refreshed Token",
                         Toast.LENGTH_LONG
                     ).show()
                 }

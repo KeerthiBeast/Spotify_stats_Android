@@ -5,6 +5,7 @@ import android.util.Log
 import android.widget.Toast
 import com.example.spotifystats.data.network.SpotifyApi
 import com.example.spotifystats.data.network.dto.RecentDto
+import com.example.spotifystats.domain.model.Availability
 import com.example.spotifystats.domain.model.Recent
 import com.example.spotifystats.domain.model.Top
 import com.example.spotifystats.domain.model.User
@@ -125,6 +126,45 @@ class SpotifyRepositoryImpl @Inject constructor(
                 ).show()
             }
             return User()
+        }
+    }
+
+    override suspend fun getAvailability(id: String): Availability {
+        val savedToken = context
+            .getSharedPreferences("app_pref", Context.MODE_PRIVATE)
+            .getString("token", " ")
+
+        try {
+            val authorization = "Bearer $savedToken"
+            val response = api.getAvailability(
+                token = authorization,
+                id = id
+            )
+            if(response.isSuccessful) {
+                val responseBody = response.body()
+                val item = responseBody?.toModel()
+                return item ?: Availability()
+            } else {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        context,
+                        "Error in API ${response.code()}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                Log.d("Error in API", response.toString())
+                return Availability()
+            }
+        } catch(e: Exception) {
+            withContext(Dispatchers.Main) {
+                Toast.makeText(
+                    context,
+                    "Error in API $e",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+            Log.d("Error in API", e.toString())
+            return Availability()
         }
     }
 }

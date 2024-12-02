@@ -16,9 +16,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.spotifystats.ui.screen.auth.AuthScreen
+import com.example.spotifystats.ui.screen.availability.AvailabilityScreen
 import com.example.spotifystats.ui.screen.favourite.FavouriteScreen
 import com.example.spotifystats.ui.screen.profile.UserScreen
+import com.example.spotifystats.ui.screen.recent.RecentScreen
 
 object NavName {
     const val home = "Blob"
@@ -36,13 +37,13 @@ fun Navigation(activity: ComponentActivity, navController: NavHostController, st
             UserScreen(context = activity, paddingValues = paddingValues)
         }
         composable(NavName.home) {
-            AuthScreen(context = activity, paddingValues = paddingValues)
+            FavouriteScreen(context = activity, paddingValues =  paddingValues)
         }
         composable(NavName.about) {
-            FavouriteScreen(context = activity, paddingValues =  paddingValues)
+            RecentScreen(context = activity, paddingValues = paddingValues)
         }
         composable(NavName.profile) {
-            FavouriteScreen(context = activity, paddingValues =  paddingValues)
+            AvailabilityScreen(context = activity, paddingValues = paddingValues)
         }
     }
 }
