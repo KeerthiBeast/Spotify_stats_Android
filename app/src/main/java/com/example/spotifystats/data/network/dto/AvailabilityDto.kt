@@ -1,5 +1,6 @@
 package com.example.spotifystats.data.network.dto
 
+import com.example.flagtesting.getFlags
 import com.example.spotifystats.domain.model.Availability
 
 data class AvailabilityDto(
@@ -23,8 +24,13 @@ data class AvailabilityDto(
 ) {
     fun toModel(): Availability = Availability(
         name = name,
-        image = album.images[1].url,
-        countries = available_markets
+        image = album.images.first().url,
+        countries = available_markets.map {
+            Availability.Country(
+                name = it,
+                flag = getFlags(it.lowercase())
+            )
+        }
     )
     data class Album(
         val album_type: String,

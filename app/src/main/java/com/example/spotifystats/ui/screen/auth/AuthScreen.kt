@@ -65,13 +65,13 @@ fun RefreshToken(
     if(sharedPref.getLong("expiresAt", 0) < System.currentTimeMillis()) {
         Log.d("Expires At", sharedPref.getLong("expiresAt", 0).toString())
         viewModel.refreshToken()
-    }
-    LaunchedEffect(true) {
-        scope.launch{
-            delay(3000)
-            onClick()
+        LaunchedEffect(true) {
+            scope.launch{
+                delay(3000)
+                onClick()
+            }
         }
-    }
+    } else onClick()
 }
 
 fun customTabRequest(context: Context) {

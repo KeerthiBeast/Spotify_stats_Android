@@ -1,6 +1,8 @@
 [versions]
 agp = "8.5.0"
 browser = "1.8.0"
+coilCompose = "3.0.4"
+coilNetworkOkhttp = "3.0.4"
 converterGson = "2.9.0"
 javapoet = "1.13.0"
 kotlin = "2.0.21"
@@ -34,6 +36,8 @@ androidx-browser = { module = "androidx.browser:browser", version.ref = "browser
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
 androidx-material = { module = "androidx.compose.material:material" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
+coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coilNetworkOkhttp" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 converter-simplexml = { module = "com.squareup.retrofit2:converter-simplexml", version.ref = "converterGson" }
 javapoet = { module = "com.squareup:javapoet", version.ref = "javapoet" }

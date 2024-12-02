@@ -108,4 +108,7 @@ dependencies {
 
     implementation(libs.javapoet)
     implementation(libs.androidx.browser)
+
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
 }
