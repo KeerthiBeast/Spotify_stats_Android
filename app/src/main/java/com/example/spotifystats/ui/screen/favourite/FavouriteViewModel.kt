@@ -7,10 +7,7 @@ import com.example.spotifystats.domain.repository.SpotifyRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,20 +18,20 @@ class FavouriteViewModel @Inject constructor(
 ): ViewModel() {
 
     private val _topTracks = MutableStateFlow<List<Top>>(emptyList())
+    val topTrack = _topTracks.asStateFlow()
 
-    private fun getTopTracks(timeRange: String) {
+    private val _title = MutableStateFlow("SHORT_TERM")
+    val title = _title.asStateFlow()
+
+    init {
+        getTopTracks("short_term")
+    }
+
+    fun getTopTracks(timeRange: String) {
+        _title.value = timeRange.uppercase()
         viewModelScope.launch {
             _topTracks.value = api.getTopTracks(timeRange)
         }
     }
-
-    val topTrack = _topTracks
-        .onStart { getTopTracks("short_term") }
-        .debounce(1000)
-        .stateIn(
-            viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
-            initialValue = _topTracks.value
-        )
 
 }
