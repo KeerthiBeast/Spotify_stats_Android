@@ -20,15 +20,11 @@ class FavouriteViewModel @Inject constructor(
     private val _topTracks = MutableStateFlow<List<Top>>(emptyList())
     val topTrack = _topTracks.asStateFlow()
 
-    private val _title = MutableStateFlow("SHORT_TERM")
-    val title = _title.asStateFlow()
-
     init {
         getTopTracks("short_term")
     }
 
     fun getTopTracks(timeRange: String) {
-        _title.value = timeRange.uppercase()
         viewModelScope.launch {
             _topTracks.value = api.getTopTracks(timeRange)
         }

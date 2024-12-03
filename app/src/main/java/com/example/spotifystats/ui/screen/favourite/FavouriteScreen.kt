@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -24,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.spotifystats.ui.screen.auth.AuthenticationChecker
-import com.example.spotifystats.ui.theme.JetBrains
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,9 +39,7 @@ fun FavouriteScreen(
                 title = {
                     Text("Favourite")
                 },
-                actions = {
-                    DropDown(viewModel)
-                }
+
             )
         }
     ) { innerPadding->
@@ -61,7 +57,6 @@ fun FavouriteScreen(
                 }
             } else {
                 val topTracks by viewModel.topTrack.collectAsState()
-                val title by viewModel.title.collectAsState()
 
                 LazyColumn(
                     contentPadding = PaddingValues(16.dp),
@@ -71,12 +66,7 @@ fun FavouriteScreen(
                         .fillMaxSize()
                 ) {
                     item {
-                        Text(
-                            text = title,
-                            fontFamily = JetBrains,
-                            style = MaterialTheme.typography.headlineLarge,
-                            modifier = Modifier.padding(16.dp)
-                        )
+                        DropDown(viewModel)
                     }
                     itemsIndexed(topTracks) { index, top ->
                         ExpandableCards(index, top, context)

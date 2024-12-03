@@ -12,7 +12,8 @@ data class RecentDto(
     fun toModel(): List<Recent> = items.map {
         Recent(
             artistName = it.track.artists.first().name,
-            songName = it.track.name
+            songName = it.track.name,
+            playedAt = it.played_at
         )
     }
 

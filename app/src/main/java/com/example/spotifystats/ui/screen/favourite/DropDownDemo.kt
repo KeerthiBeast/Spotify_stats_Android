@@ -1,19 +1,26 @@
 package com.example.spotifystats.ui.screen.favourite
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.example.spotifystats.ui.theme.JetBrains
 
 @Composable
 fun DropDown(
@@ -24,7 +31,7 @@ fun DropDown(
         mutableStateOf(false)
     }
 
-    val itemPosition = remember {
+    val itemPosition = rememberSaveable {
         mutableIntStateOf(0)
     }
 
@@ -34,15 +41,24 @@ fun DropDown(
         Duration.LongTerm
     )
 
-    var title by remember { mutableStateOf(duration[itemPosition.intValue].title) }
-
     Box {
-        IconButton(
-            onClick = { isDropDownExpanded.value = true }
-        )  {
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.clickable {
+                isDropDownExpanded.value = true
+            }
+        ) {
+            Text(
+                text = duration[itemPosition.intValue].title,
+                fontFamily = JetBrains,
+                style = MaterialTheme.typography.headlineLarge,
+                modifier = Modifier
+                    .padding(16.dp)
+            )
             Icon(
                 imageVector = Icons.Filled.ArrowDropDown,
-                contentDescription = "Drop Down"
+                contentDescription = "DropDown Icon"
             )
         }
         DropdownMenu(
@@ -57,7 +73,6 @@ fun DropDown(
                     onClick = {
                         isDropDownExpanded.value = false
                         itemPosition.intValue = index
-                        title = duration[itemPosition.intValue].title
                         viewModel.getTopTracks(username.duration)
                     })
             }

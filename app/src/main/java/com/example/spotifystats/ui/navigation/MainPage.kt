@@ -27,9 +27,9 @@ fun TopBottom(navController: NavHostController, activity: ComponentActivity) {
         mutableIntStateOf(0)
     }
     val items = listOf( //Navigation items
-        Screens.Home,
-        Screens.Sync,
-        Screens.About,
+        Screens.Fav,
+        Screens.Recent,
+        Screens.Avail,
         Screens.Profile
     )
 
@@ -76,6 +76,6 @@ fun TopBottom(navController: NavHostController, activity: ComponentActivity) {
             }
         }
     ) { innerPadding ->
-        Navigation(activity = activity, navController = navController, startDest = Screens.Home.route, paddingValues = innerPadding)
+        Navigation(activity = activity, navController = navController, startDest = Screens.Fav.route, paddingValues = innerPadding)
     }
 }

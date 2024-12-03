@@ -6,10 +6,9 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -22,9 +21,9 @@ import com.example.spotifystats.ui.screen.profile.UserScreen
 import com.example.spotifystats.ui.screen.recent.RecentScreen
 
 object NavName {
-    const val home = "Blob"
-    const val sync = "Sync"
-    const val about = "Settings"
+    const val fav = "Favourites"
+    const val recent = "Recent"
+    const val avail = "Availability"
     const val profile = "Profile"
 }
 
@@ -33,13 +32,13 @@ object NavName {
 @Composable
 fun Navigation(activity: ComponentActivity, navController: NavHostController, startDest: String, paddingValues: PaddingValues) {
     NavHost(navController = navController, startDestination = startDest) {
-        composable(NavName.sync) {
+        composable(NavName.recent) {
             RecentScreen(context = activity, paddingValues = paddingValues)
         }
-        composable(NavName.home) {
+        composable(NavName.fav) {
             FavouriteScreen(context = activity, paddingValues =  paddingValues)
         }
-        composable(NavName.about) {
+        composable(NavName.avail) {
             AvailabilityScreen(context = activity, paddingValues = paddingValues)
         }
         composable(NavName.profile) {
@@ -54,23 +53,23 @@ sealed class Screens(val route: String,
                      val unselected: ImageVector,
                      val label: String) {
 
-    data object Home: Screens(
-        route = NavName.home,
+    data object Fav: Screens(
+        route = NavName.fav,
         selected = Icons.Default.Favorite,
         unselected = Icons.Default.FavoriteBorder,
-        label = NavName.home
+        label = NavName.fav
     )
-    data object Sync: Screens(
-        route = NavName.sync,
-        selected = Icons.Default.Add,
-        unselected = Icons.Default.AddCircle,
-        label = NavName.sync
+    data object Recent: Screens(
+        route = NavName.recent,
+        selected = Icons.Default.PlayArrow,
+        unselected = Icons.Default.PlayArrow,
+        label = NavName.recent
     )
-    data object About: Screens(
-        route = NavName.about,
+    data object Avail: Screens(
+        route = NavName.avail,
         selected = Icons.Default.Search,
         unselected = Icons.Default.Search,
-        label = NavName.about
+        label = NavName.avail
     )
     data object Profile: Screens(
         route = NavName.profile,

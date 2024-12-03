@@ -15,7 +15,7 @@ data class TopDto(
         Top(
             songName = it.name,
             artistName = it.artists.first().name,
-            imageUrl = it.album.images[2].url,
+            imageUrl = it.album.images.first().url,
             songUrl = it.external_urls.spotify
         )
     }
