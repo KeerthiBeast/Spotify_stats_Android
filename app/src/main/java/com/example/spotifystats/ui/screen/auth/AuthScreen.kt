@@ -4,18 +4,43 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.example.spotifystats.Values
+import com.example.spotifystats.ui.navigation.NavName
+import com.example.spotifystats.ui.navigation.Screens
 import com.example.spotifystats.ui.theme.CircularBlack
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
+@Composable
+fun LoginScreen(
+    context: Context,
+    navController: NavHostController
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        LoginBtn(context = context) {
+            navController.navigate(Screens.Fav.route)
+        }
+    }
+}
 
 @Composable
 fun LoginBtn(
@@ -39,7 +64,7 @@ fun LoginBtn(
 @Composable
 fun LogoutBtn(
     context: Context,
-    onClick: () -> Unit
+    navController: NavHostController,
 ) {
     val sharedPreferences = context.getSharedPreferences("app_pref", Context.MODE_PRIVATE)
     Button(
@@ -50,7 +75,7 @@ fun LogoutBtn(
                 putString("refresh", null)
                 apply()
             }
-            onClick()
+            navController.navigate(NavName.auth)
         },
         colors = ButtonColors(
             containerColor = Color.Red,
@@ -64,26 +89,6 @@ fun LogoutBtn(
             fontFamily = CircularBlack
         )
     }
-}
-
-@Composable
-fun RefreshToken(
-    context: Context,
-    onClick: () -> Unit,
-    viewModel: AuthViewModel = hiltViewModel()
-) {
-    val sharedPref = context.getSharedPreferences("app_pref", Context.MODE_PRIVATE)
-    val scope = rememberCoroutineScope()
-    if(sharedPref.getLong("expiresAt", 0) < System.currentTimeMillis()) {
-        Log.d("Expires At", sharedPref.getLong("expiresAt", 0).toString())
-        viewModel.refreshToken()
-        LaunchedEffect(true) {
-            scope.launch{
-                delay(3000)
-                onClick()
-            }
-        }
-    } else onClick()
 }
 
 fun customTabRequest(context: Context) {
@@ -102,17 +107,4 @@ fun customTabRequest(context: Context) {
         context,
         Uri.parse(urlConstructor.toString())
     )
-}
-
-@Composable
-fun AuthenticationChecker(
-    context: Context,
-    onClick: () -> Unit
-) {
-    val sharedPref = context.getSharedPreferences("app_pref", Context.MODE_PRIVATE)
-    if(sharedPref.getString("token", null) == null) {
-        LoginBtn(context = context, onClick = onClick)
-    } else {
-        RefreshToken(context = context, onClick = onClick)
-    }
 }

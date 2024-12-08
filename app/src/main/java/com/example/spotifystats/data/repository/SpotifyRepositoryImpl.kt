@@ -4,26 +4,43 @@ import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import com.example.spotifystats.data.network.SpotifyApi
-import com.example.spotifystats.data.network.dto.RecentDto
 import com.example.spotifystats.domain.model.Availability
 import com.example.spotifystats.domain.model.Recent
 import com.example.spotifystats.domain.model.Top
 import com.example.spotifystats.domain.model.User
+import com.example.spotifystats.domain.repository.SpotifyAuthRepository
 import com.example.spotifystats.domain.repository.SpotifyRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class SpotifyRepositoryImpl @Inject constructor(
     private val api: SpotifyApi,
+    private val auth: SpotifyAuthRepository,
     @ApplicationContext private val context: Context
 ): SpotifyRepository {
 
     override suspend fun getRecentlyPlayed(): List<Recent> {
-        val savedToken = context
-            .getSharedPreferences("app_pref", Context.MODE_PRIVATE)
-            .getString("token", " ")
+        val sharedPref = context
+            .getSharedPreferences(
+                "app_pref",
+                Context.MODE_PRIVATE
+            )
+
+        val savedToken = sharedPref.getString("token", null)
+        val expiresAt = sharedPref.getLong("expiresAt", 0)
+
+        val refreshToken = CoroutineScope(Dispatchers.IO).launch {
+            if (expiresAt < System.currentTimeMillis()) {
+                auth.refreshToken()
+            }
+        }
+
+        runBlocking { refreshToken.join() }
 
         try {
             val authorization = "Bearer $savedToken"
@@ -57,9 +74,22 @@ class SpotifyRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getTopTracks(timeRange: String): List<Top> {
-        val savedToken = context
-            .getSharedPreferences("app_pref", Context.MODE_PRIVATE)
-            .getString("token", " ")
+        val sharedPref = context
+            .getSharedPreferences(
+                "app_pref",
+                Context.MODE_PRIVATE
+            )
+
+        val savedToken = sharedPref.getString("token", null)
+        val expiresAt = sharedPref.getLong("expiresAt", 0)
+
+        val refreshToken = CoroutineScope(Dispatchers.IO).launch {
+            if (expiresAt < System.currentTimeMillis()) {
+                auth.refreshToken()
+            }
+        }
+
+        runBlocking { refreshToken.join() }
 
         try {
             val authorization = "Bearer $savedToken"
@@ -95,9 +125,22 @@ class SpotifyRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getUser(): User {
-        val savedToken = context
-            .getSharedPreferences("app_pref", Context.MODE_PRIVATE)
-            .getString("token", " ")
+        val sharedPref = context
+            .getSharedPreferences(
+                "app_pref",
+                Context.MODE_PRIVATE
+            )
+
+        val savedToken = sharedPref.getString("token", null)
+        val expiresAt = sharedPref.getLong("expiresAt", 0)
+
+        val refreshToken = CoroutineScope(Dispatchers.IO).launch {
+            if (expiresAt < System.currentTimeMillis()) {
+                auth.refreshToken()
+            }
+        }
+
+        runBlocking { refreshToken.join() }
 
         try {
             val authorization = "Bearer $savedToken"
@@ -130,9 +173,22 @@ class SpotifyRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getAvailability(id: String): Availability {
-        val savedToken = context
-            .getSharedPreferences("app_pref", Context.MODE_PRIVATE)
-            .getString("token", " ")
+        val sharedPref = context
+            .getSharedPreferences(
+                "app_pref",
+                Context.MODE_PRIVATE
+            )
+
+        val savedToken = sharedPref.getString("token", null)
+        val expiresAt = sharedPref.getLong("expiresAt", 0)
+
+        val refreshToken = CoroutineScope(Dispatchers.IO).launch {
+            if (expiresAt < System.currentTimeMillis()) {
+                auth.refreshToken()
+            }
+        }
+
+        runBlocking { refreshToken.join() }
 
         try {
             val authorization = "Bearer $savedToken"

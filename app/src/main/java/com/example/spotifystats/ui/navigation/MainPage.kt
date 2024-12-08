@@ -1,5 +1,6 @@
 package com.example.spotifystats.ui.navigation
 
+import android.content.Context
 import android.os.Build
 import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresApi
@@ -35,6 +36,7 @@ fun TopBottom(navController: NavHostController, activity: ComponentActivity) {
 
     Scaffold(
         bottomBar = {
+            if(currentDestination?.route != NavName.auth)
             NavigationBar {
                 items.forEachIndexed { index, item ->
                     NavigationBarItem(
@@ -76,6 +78,19 @@ fun TopBottom(navController: NavHostController, activity: ComponentActivity) {
             }
         }
     ) { innerPadding ->
-        Navigation(activity = activity, navController = navController, startDest = Screens.Fav.route, paddingValues = innerPadding)
+        var startDest = Screens.Fav.route
+        val sharedPref = activity.
+        getSharedPreferences("app_pref", Context.MODE_PRIVATE)
+
+        if(sharedPref.getString("token", null) == null) {
+            startDest = NavName.auth
+        }
+
+        Navigation(
+            activity = activity,
+            navController = navController,
+            startDest = startDest,
+            paddingValues = innerPadding
+        )
     }
 }

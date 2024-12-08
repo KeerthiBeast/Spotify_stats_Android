@@ -44,8 +44,9 @@ object AppModule {
     @Singleton
     fun providesSpotifyRepository(
         api: SpotifyApi,
+        auth: SpotifyAuthRepository,
         @ApplicationContext context: Context
-    ): SpotifyRepository = SpotifyRepositoryImpl(api, context)
+    ): SpotifyRepository = SpotifyRepositoryImpl(api, auth, context)
 
     @Provides
     @Singleton

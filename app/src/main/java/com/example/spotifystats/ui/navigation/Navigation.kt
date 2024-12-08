@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.spotifystats.ui.screen.auth.LoginScreen
 import com.example.spotifystats.ui.screen.availability.AvailabilityScreen
 import com.example.spotifystats.ui.screen.favourite.FavouriteScreen
 import com.example.spotifystats.ui.screen.profile.UserScreen
@@ -25,24 +26,43 @@ object NavName {
     const val recent = "Recent"
     const val avail = "Availability"
     const val profile = "Profile"
+    const val auth = "Auth"
 }
 
 //Main navigation function
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
-fun Navigation(activity: ComponentActivity, navController: NavHostController, startDest: String, paddingValues: PaddingValues) {
+fun Navigation(
+    activity: ComponentActivity,
+    navController: NavHostController,
+    startDest: String,
+    paddingValues: PaddingValues
+) {
     NavHost(navController = navController, startDestination = startDest) {
         composable(NavName.recent) {
-            RecentScreen(context = activity, paddingValues = paddingValues)
+            RecentScreen(paddingValues = paddingValues)
         }
         composable(NavName.fav) {
-            FavouriteScreen(context = activity, paddingValues =  paddingValues)
+            FavouriteScreen(
+                context = activity,
+                paddingValues =  paddingValues
+            )
         }
         composable(NavName.avail) {
-            AvailabilityScreen(context = activity, paddingValues = paddingValues)
+            AvailabilityScreen(paddingValues = paddingValues)
         }
         composable(NavName.profile) {
-            UserScreen(context = activity, paddingValues = paddingValues)
+            UserScreen(
+                context = activity,
+                navController = navController,
+                paddingValues = paddingValues
+            )
+        }
+        composable(NavName.auth) {
+            LoginScreen(
+                context = activity,
+                navController = navController
+            )
         }
     }
 }

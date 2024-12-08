@@ -15,14 +15,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.spotifystats.ui.screen.auth.AuthenticationChecker
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,8 +27,6 @@ fun FavouriteScreen(
     context: Context,
     paddingValues: PaddingValues
 ) {
-    var canShow by remember { mutableStateOf(false)}
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -51,26 +45,20 @@ fun FavouriteScreen(
                 .padding(innerPadding)
                 .padding(bottom = paddingValues.calculateBottomPadding())
         ) {
-            if (!canShow) {
-                AuthenticationChecker(context) {
-                    canShow = true
-                }
-            } else {
-                val topTracks by viewModel.topTrack.collectAsState()
+            val topTracks by viewModel.topTrack.collectAsState()
 
-                LazyColumn(
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .fillMaxSize()
-                ) {
-                    item {
-                        DropDown(viewModel)
-                    }
-                    itemsIndexed(topTracks) { index, top ->
-                        ExpandableCards(index, top, context)
-                    }
+            LazyColumn(
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                item {
+                    DropDown(viewModel)
+                }
+                itemsIndexed(topTracks) { index, top ->
+                    ExpandableCards(index, top, context)
                 }
             }
         }

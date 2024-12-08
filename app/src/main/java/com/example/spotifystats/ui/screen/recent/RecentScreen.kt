@@ -16,25 +16,19 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.spotifystats.ui.screen.auth.AuthenticationChecker
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecentScreen(
     viewModel: RecentViewModel = hiltViewModel(),
-    context: Context,
     paddingValues: PaddingValues
 ) {
-    var canShow by remember { mutableStateOf(false) }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -52,43 +46,37 @@ fun RecentScreen(
                 .padding(innerPadding)
                 .padding(bottom = paddingValues.calculateBottomPadding())
         ) {
-            if (!canShow) {
-                AuthenticationChecker(context) {
-                    canShow = true
-                }
-            } else {
-                val recentTracks by viewModel.recentTracks.collectAsState()
+            val recentTracks by viewModel.recentTracks.collectAsState()
 
-                LazyColumn(
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier
-                        .fillMaxSize()
-                ) {
-                    items(recentTracks) { track->
-                        Column(
-                            verticalArrangement = Arrangement.SpaceEvenly,
-                            horizontalAlignment = Alignment.Start
-                        ) {
-                            Text(
-                                text = track.songName,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier
-                                    .padding(16.dp)
-                            )
-                            Text(
-                                text = formatString(track.playedAt),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier
-                                    .padding(16.dp)
-                            )
-                        }
-                        HorizontalDivider(
-                            color = Color.Red
+            LazyColumn(
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                items(recentTracks) { track->
+                    Column(
+                        verticalArrangement = Arrangement.SpaceEvenly,
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        Text(
+                            text = track.songName,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier
+                                .padding(16.dp)
+                        )
+                        Text(
+                            text = formatString(track.playedAt),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier
+                                .padding(16.dp)
                         )
                     }
+                    HorizontalDivider(
+                        color = Color.Red
+                    )
                 }
             }
         }

@@ -2,6 +2,7 @@ package com.example.spotifystats.ui.screen.availability
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.spotifystats.Values
 import com.example.spotifystats.domain.model.Availability
 import com.example.spotifystats.domain.repository.SpotifyRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,6 +17,10 @@ class AvailabilityViewModel @Inject constructor(
 ): ViewModel(){
     private val _availability = MutableStateFlow<Availability>(Availability())
     val availability = _availability.asStateFlow()
+
+    init {
+        getAvailability(Values.testUrl)
+    }
 
     fun getAvailability(id: String){
         viewModelScope.launch {

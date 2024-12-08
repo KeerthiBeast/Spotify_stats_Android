@@ -1,7 +1,6 @@
 package com.example.spotifystats.ui.screen.availability
 
 import android.annotation.SuppressLint
-import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -43,7 +42,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.example.spotifystats.Values
 import com.example.spotifystats.domain.model.Availability
-import com.example.spotifystats.ui.screen.auth.AuthenticationChecker
 import com.example.spotifystats.ui.theme.CircularBlack
 
 @SuppressLint("ResourceType")
@@ -51,10 +49,8 @@ import com.example.spotifystats.ui.theme.CircularBlack
 @Composable
 fun AvailabilityScreen(
     viewModel: AvailabilityViewModel = hiltViewModel(),
-    context: Context,
     paddingValues: PaddingValues
 ) {
-    var canShow by remember { mutableStateOf(false)}
     var showSearchBar by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -85,80 +81,71 @@ fun AvailabilityScreen(
                 .padding(innerPadding)
                 .padding(bottom = paddingValues.calculateBottomPadding())
         ) {
-            if (!canShow) {
-                AuthenticationChecker(context) {
-                    canShow = true
-                }
-            } else {
-                LaunchedEffect(true) {
-                    viewModel.getAvailability(getId(Values.testUrl))
-                }
-                val availability by viewModel.availability.collectAsState()
-                var songId by remember { mutableStateOf("") }
-                var isEnabled by remember { mutableStateOf(false) }
+            val availability by viewModel.availability.collectAsState()
+            var songId by remember { mutableStateOf("") }
+            var isEnabled by remember { mutableStateOf(false) }
 
-                if (showSearchBar) {
-                    OutlinedTextField(
-                        value = songId,
-                        onValueChange = {
-                            songId = it
-                            isEnabled = songId.isNotEmpty()
-                        },
-                        singleLine = true,
-                        label = { Text("Song ID") },
-                        shape = MaterialTheme.shapes.large,
-                        leadingIcon = {
+            if (showSearchBar) {
+                OutlinedTextField(
+                    value = songId,
+                    onValueChange = {
+                        songId = it
+                        isEnabled = songId.isNotEmpty()
+                    },
+                    singleLine = true,
+                    label = { Text("Song ID") },
+                    shape = MaterialTheme.shapes.large,
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Info,
+                            contentDescription = "Song ID"
+                        )
+                    },
+                    trailingIcon = {
+                        IconButton(
+                            onClick = {
+                                val id = getId(songId)
+                                viewModel.getAvailability(id)
+                                songId = ""
+                                isEnabled = false
+                            },
+                            enabled = isEnabled
+                        ) {
                             Icon(
-                                imageVector = Icons.Default.Info,
-                                contentDescription = "Song ID"
+                                imageVector = Icons.Default.Search,
+                                contentDescription = "Search"
                             )
-                        },
-                        trailingIcon = {
-                            IconButton(
-                                onClick = {
-                                    val id = getId(songId)
-                                    viewModel.getAvailability(id)
-                                    songId = ""
-                                    isEnabled = false
-                                },
-                                enabled = isEnabled
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Search,
-                                    contentDescription = "Search"
-                                )
-                            }
-                        },
-                        modifier = Modifier
-                            .padding(16.dp)
-                    )
-                }
-                if(availability.image.isNotBlank()) {
-                    AsyncImage(
-                        model = availability.image,
-                        contentDescription = "Song cover",
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .clip(shape = CircleShape)
-                    )
-                }
-                Spacer(modifier = Modifier.size(7.dp))
-                Text(
-                    text = availability.name,
-                    fontFamily = CircularBlack,
-                    color = Color.Green,
-                    modifier = Modifier
-                        .padding(6.dp)
-                )
-
-                if (availability.countries.isNotEmpty()) {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(4),
-                        contentPadding = PaddingValues(16.dp),
-                    ) {
-                        items(availability.countries) { country ->
-                            CountryWithFlags(country)
                         }
+                    },
+                    modifier = Modifier
+                        .padding(16.dp)
+                )
+            }
+            if(availability.image.isNotBlank()) {
+                AsyncImage(
+                    model = availability.image,
+                    contentDescription = "Song cover",
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .clip(shape = CircleShape)
+                )
+            }
+            Spacer(modifier = Modifier.size(7.dp))
+            Text(
+                text = availability.name,
+                fontFamily = CircularBlack,
+                color = Color.Green,
+                modifier = Modifier
+                    .padding(6.dp)
+            )
+
+            if (availability.countries.isNotEmpty()) {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(4),
+                    contentPadding = PaddingValues(16.dp),
+                ) {
+                    items(availability.countries) { country ->
+                        CountryWithFlags(country)
                     }
                 }
             }
